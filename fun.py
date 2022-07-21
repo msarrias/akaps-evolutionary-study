@@ -1,8 +1,10 @@
-import subprocess, re, alv
+import subprocess, re, alv, os
 from Bio import SeqIO,AlignIO
 from io import StringIO
 from dna_features_viewer import GraphicFeature, GraphicRecord
 import matplotlib.pyplot as plt
+from ete3 import PhyloTree, Tree, faces, TreeStyle
+
 
 def seq_domain_alignment(msa_seqs,
                          seqs,
@@ -50,7 +52,36 @@ def visualiza_structure(host_guest_dict,
                      fontsize=11)
         record.plot(ax=ax[idx])
     
-    
+
+def layout_tol(node):
+    img_path = 'phylo_figs/'
+    _,_,_,host_guest_dict = akap5_species_dic()
+    nameFace = faces.AttrFace("name", 
+                              fsize=10,
+                              fgcolor="#009000")
+    faces_dict = {x.rsplit('.')[0] : faces.ImgFace(img_path+x) 
+              for x in [i for i in os.listdir(img_path) if '.jpeg' in i]}
+    if node.is_leaf():
+        temp_node_name = host_guest_dict[node.name].replace('_', ' ').capitalize()
+        node.add_face(faces.TextFace(temp_node_name,
+                                     fsize = 25),
+                      column=0)
+        if node.name in faces_dict:
+            descFace = faces_dict[node.name]
+            descFace.border.margin = 1
+            faces.add_face_to_node(descFace, node, column=1, aligned=True)
+
+
+def show_tree_of_life_model_species(nw_tree_dir):  
+    t = Tree(nw_tree_dir)
+    ts = TreeStyle()
+    ts.layout_fn = layout_tol
+    ts.show_leaf_name = False
+    ts.scale =  1
+    ts.show_scale = False
+    return ts, t
+
+
 def colors():
     return {'WSK': '#ffcccc',
             'WAK':"#cffccc",
