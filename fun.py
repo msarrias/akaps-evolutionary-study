@@ -1,4 +1,4 @@
-import subprocess, re, alv, os
+import subprocess, re, alv, os, warnings
 from Bio import SeqIO,AlignIO
 from io import StringIO
 from dna_features_viewer import GraphicFeature, GraphicRecord
@@ -11,17 +11,20 @@ def seq_domain_alignment(msa_seqs,
                          start,
                          end,
                          binding_partner,
+                         file_name,
                          binding_part_dict = {}):
     temp_msa = {}
     if not binding_part_dict:
         binding_part_dict = {specie:[] for specie in msa_seqs.keys()}
     max_len = max(map(len, msa_seqs.keys()))
-    for specie, seq in msa_seqs.items():
-        temp_species = specie + ' ' *  (max_len - len(specie))
-        temp_msa[temp_species] = seq[start:end]
-        binding_part_dict[specie].append((binding_partner,
-                                          re.search(temp_msa[temp_species].replace('-',''),
-                                                    seqs[specie]).span()))
+    with open(file_name, "w") as ofile_dna:
+        for specie, seq in msa_seqs.items():
+            temp_species = specie + ' ' *  (max_len - len(specie))
+            temp_msa[temp_species] = seq[start:end]
+            binding_part_dict[specie].append((binding_partner,
+                                              re.search(temp_msa[temp_species].replace('-',''),
+                                                        seqs[specie]).span()))
+            ofile_dna.write(">" + specie.rsplit('_akap')[0] +  "\n" + temp_msa[temp_species] + "\n")
         count = len(temp_msa)
         length = max(map(len, temp_msa.values()))
         msa = f" {count} {length}\n"
@@ -31,7 +34,14 @@ def seq_domain_alignment(msa_seqs,
     return binding_part_dict, aln
 
 
-def visualiza_structure(host_guest_dict,
+def render_msa_phylo(nwk_direct, align, host_guest_dict):
+    t = PhyloTree(nwk_direct, format = 1, alignment=align, alg_format="fasta")
+    for leaf in t.iter_leaves():
+        leaf.name = host_guest_dict[leaf.name].capitalize().replace('_', ' ')
+    return t
+
+
+def visualize_structure(host_guest_dict,
                         colors_,
                         regions_dict,
                         title,
@@ -120,7 +130,7 @@ def akap5_species_dic():
 
     species_guest_to_host_map_dic = {'human': 'Homo_sapiens',
                                  'mouse': 'Mus_musculus',
-                                 'pig': 'Sus_scrofa',
+                                 'wild_boar': 'Sus_scrofa',
                                  'cow': 'Bos_taurus',
                                  'dog': 'Canis_lupus',
                                  'opossum': 'Monodelphis_domestica',
@@ -133,7 +143,7 @@ def akap5_species_dic():
                                  'takifugu' : 'Takifugu_rubripes'}
     species_host_to_guest_map_dic = {'Homo_sapiens':'human',
                                      'Mus_musculus': 'mouse',
-                                     'Sus_scrofa':'pig',
+                                     'Sus_scrofa':'wild boar',
                                      'Bos_taurus': 'cow',
                                      'Canis_lupus':'dog',
                                      'Monodelphis_domestica': 'opossum',
