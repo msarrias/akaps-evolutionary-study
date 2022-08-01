@@ -1,6 +1,12 @@
-import subprocess, re, alv, os, warnings
+import subprocess
+import re
+import alv
+import os
 import random
 import numpy as np
+import dendropy
+import pandas as pd
+from collections import Counter
 from Bio.Blast import NCBIXML, NCBIWWW
 from Bio import SeqIO,AlignIO
 from io import StringIO
@@ -9,6 +15,34 @@ import matplotlib.pyplot as plt
 from ete3 import PhyloTree, Tree, faces, TreeStyle
 
 
+
+class binding_regions():
+    def muscle_msa(self, seq_filename, msa_filename):
+        subprocess.call(["muscle","-in", seq_filename, "-out", msa_filename], 
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.STDOUT)
+    def build_profile_hmm(self, profile_filename, msa_filename):
+        subprocess.call(["hmmbuild",profile_filename,
+                 msa_filename],
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.STDOUT)
+    def search_binding_regions(self, sto_filename, profile_filename, seq_filename):
+        subprocess.call(["hmmsearch",
+                         "-E", "0.001",
+                         "-A", sto_filename, profile_filename ,seq_filename],
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.STDOUT)
+    def generate_seed_file(self, base_seeds_filename, new_seeds, out_direct):
+        with open(out_direct, 'w') as f:
+            if base_seeds_filename != '':
+                temp_base_seq = {fasta.id: str(fasta.seq) 
+                                 for fasta in SeqIO.parse(open(base_seeds_filename),'fasta')}
+                for name, seq in temp_base_seq.items():
+                    f.write(">" + str(name) +  "\n" + seq + "\n")
+            for name, seq in new_seeds.items():
+                f.write(">" + str(name) +  "\n" + seq + "\n")
+                
+                
 def seq_domain_alignment(msa_seqs,
                          seqs,
                          start,
@@ -82,6 +116,16 @@ def visualize_structure(host_guest_dict,
             record.plot(figure_width=4, figure_height=1.3) 
             plt.savefig('figs/' + title+ '-' + str(name), bbox_inches='tight') 
             
+
+def read_sto_files(filename):
+    sequences = SeqIO.parse(open(filename),'stockholm')
+    sto_read = {}
+    for id_, fasta in enumerate(sequences):
+        start = int(fasta.id.rsplit('/')[1].rsplit('-')[0]) - 1
+        end = int(fasta.id.rsplit('/')[1].rsplit('-')[1])
+        sto_read[fasta.id.rsplit('/')[0] + '-' + str(id_)] = [(start,end), str(fasta.seq)]
+    return sto_read
+
 
 def layout_tol(node):
     img_path = 'phylo_figs/'
@@ -192,6 +236,58 @@ def regions_colors(regions_dict):
     return binding_regions_colors
 
 
+def get_overlap(a, b):
+    return max(0, min(a[1], b[1]) - max(a[0], b[0]))
+
+
+def generate_seed_file(base_seeds_filename, new_seeds, out_direct):
+    with open(out_direct, 'w') as f:
+        if base_seeds_filename != '':
+            temp_base_seq = {fasta.id: str(fasta.seq) 
+                             for fasta in SeqIO.parse(open(base_seeds_filename),'fasta')}
+            for name, seq in temp_base_seq.items():
+                f.write(">" + str(name) +  "\n" + seq + "\n")
+        for name, seq in new_seeds.items():
+            f.write(">" + str(name) +  "\n" + seq + "\n")
+            
+            
+def hmm_hits_analysis_df(regions_dict, hits_counter, aling_coord, hmm_hits):
+    instances = []
+    overlaps = []
+    for specie in regions_dict.keys():
+        if specie in hits_counter:
+            instances.append(hits_counter[specie])
+            hit_coord = [value[0] for key, value in hmm_hits.items() if specie in key][0]
+            if get_overlap(hit_coord, aling_coord[specie]) > 0:
+                overlaps.append(True)
+            else:
+                overlaps.append(False)      
+        else:
+            instances.append(0)
+            overlaps.append('-')
+    d = {'specie':list(regions_dict.keys()),'number of instances':instances, 'aligned to ref seq in msa':overlaps}
+    df = pd.DataFrame(data=d)
+    df.sort_values(by=['number of instances'], inplace=True)
+    df.reset_index(drop=True, inplace=True)
+    return df
+
+
+def generate_blast_df(model_species, hits_species_dict):
+    df = {'specie':[], 'name':[], 'e-value':[]}
+    for scientific_name, common_name in model_species.items():
+        scientific_name = scientific_name.replace('_', ' ')
+        temp_hits_list = [i for i in set(list(hits_species_dict.keys())) if scientific_name in i]
+        if temp_hits_list:
+            for hit in [hits_species_dict[specie_hit] for specie_hit in temp_hits_list]:
+                for h_i in hit:
+                    df['specie'].append(scientific_name)
+                    df['name'].append(h_i[0])
+                    df['e-value'].append(h_i[1])
+    df = pd.DataFrame(data=df)
+    df = df.groupby('specie').apply(lambda x: x.sort_values('name'))
+    return df
+    
+    
 def species_host_to_guest_map_dic():
     return {'Homo_sapiens':'human',
             'Mus_musculus': 'mouse',
