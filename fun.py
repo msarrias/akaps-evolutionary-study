@@ -15,8 +15,9 @@ import matplotlib.pyplot as plt
 from ete3 import PhyloTree, Tree, faces, TreeStyle
 
 
-
 class binding_regions():
+    def parse_fasta_file(self, filename):
+        return {fasta.id:str(fasta.seq) for fasta in SeqIO.parse(open(filename),'fasta')}
     def muscle_msa(self, seq_filename, msa_filename):
         subprocess.call(["muscle","-in", seq_filename, "-out", msa_filename], 
                 stdout=subprocess.DEVNULL,
@@ -41,6 +42,9 @@ class binding_regions():
                     f.write(">" + str(name) +  "\n" + seq + "\n")
             for name, seq in new_seeds.items():
                 f.write(">" + str(name) +  "\n" + seq + "\n")
+    def find_binding_region(self, base_string, ref_specie, msa_seq):
+        compiled_regex = re.compile('(-)*'.join(list(base_string)))
+        return compiled_regex.search(msa_seq[ref_specie]).span()
                 
                 
 def seq_domain_alignment(msa_seqs,
