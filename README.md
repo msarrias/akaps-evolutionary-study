@@ -1,4 +1,6 @@
-#### We will study the evolutionary history of the AKAP79 protein, first, by looking at this protein in different species.
+## Investigating the evolutionary history of the AKAP79 protein
+
+### We will study the evolutionary history of the AKAP79 protein, first, by looking at this protein in different species.
 
 For our analysis we selected the next model organism, each chosen to provide coverage of the tree of life:
 
@@ -7,6 +9,9 @@ For our analysis we selected the next model organism, each chosen to provide cov
 
 
 ### AKAP79
+
+<img width="463" alt="image" src="https://user-images.githubusercontent.com/16377368/182708369-df5f62af-62c1-47c0-93eb-5161715cd11e.png">
+
 * We use as reference the AKAP79 sequence in human
 - **Gene:** AKAP5
 - **Protein name:** AKAP79, AKAP5 ,…
@@ -37,17 +42,19 @@ For that reason, we searched for the AKAP79 protein in the genome of 80 fish spe
 Among the species, we included:  jaw-less, cartilaginous and bony fish.
 Our findings show that the AKAP79 protein did not appear in any of the fish species before mentioned, which could indicate that AKAP79 
 was not part of first vertebrates. Nevertheless, unlike AKAP79, Gravin (AKAP12) appeared in almost all fish species 
-*Gasterosteus aculeatus*, which raises the questions of;
+(excluding *Gasterosteus aculeatus*), which raises the questions of;
 - Which protein serves the same function as AKAP79 in fish? and, 
 - How is Gravin related to AKAP79? (considering that they are not homologous)
 
 Note that, even if  Gravin sequences are homologous, it would be difficult to compare them with AKAP79 sequences as they have low similarities,
-which could indicate that AKAP79 did not originate from Bravin. Hence, one can say that their similarities are restricted to the WSK motif.
-In terms of the WSK motif architecture, the Pfam sequences database exhibited 4 different architectures (that include more than one sequence),
-of which only one of them includes an interaction with another domain. Hence, besides showing different repetition patterns,
-the WSK motif only interacts with the RII$\_\text{binding}\_1$ domain on Gravin protein sequences.
+which could indicate that AKAP79 did not originate from Gravin. Hence, one can say that their similarities are restricted to the WSK motif.
+As for the WSK motif, the Pfam database shows 4 different architectures in which it appears, of which only one includes an interaction with
+another domain. Therefore, in addition to showing different repeat patterns the WSK motif only interacts with the RII binding domain in the 
+Gravin protein sequences.
 
 ### Gravin
+
+<img width="751" alt="image" src="https://user-images.githubusercontent.com/16377368/182708630-99115926-e8c0-453a-9f0d-b643e6948646.png">
 
 * We use as reference the AKAP12 sequence in human
 - **Gene:** AKAP12
