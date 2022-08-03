@@ -3,7 +3,8 @@
 For our analysis we selected the next model organism, each chosen to provide coverage of the tree of life:
 
 
-<img width="444" alt="image" src="https://user-images.githubusercontent.com/16377368/182665357-7f4e8649-141c-4eb0-904e-5aa2f5e8f6dd.png">
+<img width="609" alt="image" src="https://user-images.githubusercontent.com/16377368/182667771-85023bb1-8c58-44dc-8a03-035febca9eef.png">
+
 
 ### AKAP79
 * We use as reference the AKAP79 sequence in human
