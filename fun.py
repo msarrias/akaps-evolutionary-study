@@ -56,18 +56,23 @@ def seq_domain_alignment(msa_seqs,
                          binding_partner = '',
                          binding_part_dict = {}):
     temp_msa = {}
+    
     if not binding_part_dict:
-        binding_part_dict = {specie:{} for specie in msa_seqs.keys()}
+        binding_part_dict = {}
     max_len = max(map(len, msa_seqs.keys()))
     with open(file_name, "w") as ofile_dna:
         for specie, seq in msa_seqs.items():
             temp_species = specie + ' ' *  (max_len - len(specie))
+            if seq[start:end].count('-') >= round((end-start)*0.5):
+                continue
+            if specie not in binding_part_dict:
+                binding_part_dict[specie] = {}
             temp_msa[temp_species] = seq[start:end]
             temp_seq = temp_msa[temp_species].replace('-','')
             if motif_coords:
                 temp_binding_partner = ''.join([seq[i] for i in motif_coords])
                 if '-' in temp_binding_partner:
-                    pass
+                    continue
                 else:
                     binding_partner = temp_binding_partner
             if binding_partner not in binding_part_dict[specie]:
