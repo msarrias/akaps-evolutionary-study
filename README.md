@@ -1,8 +1,9 @@
 ## Investigating the evolutionary history of the AKAP79 protein
 
-### We will study the evolutionary history of the AKAP79 protein, first, by looking at this protein in different species.
+### We will study the evolutionary history of the AKAP79 protein.
 
-For our analysis we selected the next model organism, each chosen to provide coverage of the tree of life:
+We start by looking at this protein in different species. For our analysis we selected the next model organism, each chosen to provide coverage 
+ of the tree of life:
 
 
 <img width="609" alt="image" src="https://user-images.githubusercontent.com/16377368/182667771-85023bb1-8c58-44dc-8a03-035febca9eef.png">
@@ -25,7 +26,7 @@ For our analysis we selected the next model organism, each chosen to provide cov
 - Can we find repeated instances?
     - We can use a profile hmm for identifying binding regions and possible repetitions.
     
-Disadvantages:
+Note:
 - One cannot conclude that a binding region is present in a species solely by looking at a msa
 - the profile hmm might fail to identify binding regions, specially when few seed sequences are used for creating the model.
 
