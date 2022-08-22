@@ -228,7 +228,8 @@ def NCBI_order_ids():
             'Passeriformes':'9126',
             'Cypriniformes':'7952',
             'Anura':'8342',
-            'Tetraodontiformes':'31022'}
+            'Tetraodontiformes':'31022',
+            'Chondrichthyes': '7777'}
 
 
 def regions_colors(regions_dict):
