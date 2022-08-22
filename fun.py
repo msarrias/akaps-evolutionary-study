@@ -250,6 +250,10 @@ def get_overlap(a, b):
     return max(0, min(a[1], b[1]) - max(a[0], b[0]))
 
 
+def flatten(l):
+    return [item for sublist in l for item in sublist]
+
+
 def generate_seed_file(base_seeds_filename, new_seeds, out_direct):
     with open(out_direct, 'w') as f:
         if base_seeds_filename != '':
@@ -261,17 +265,37 @@ def generate_seed_file(base_seeds_filename, new_seeds, out_direct):
             f.write(">" + str(name) +  "\n" + seq + "\n")
             
             
-def hmm_hits_analysis_df(regions_dict, hits_counter, aling_coord, hmm_hits):
+def hmm_hits_analysis_df(regions_dict, hmm_hits):
     instances = []
     overlaps = []
-    for specie in regions_dict.keys():
-        if specie in hits_counter:
-            instances.append(hits_counter[specie])
-            hit_coord = [value[0] for key, value in hmm_hits.items() if specie in key][0]
-            if get_overlap(hit_coord, aling_coord[specie]) > 0:
-                overlaps.append(True)
-            else:
-                overlaps.append(False)      
+    hmm_coord_hits = {}
+    
+    for hit, hit_info in hmm_hits.items():
+        specie_name = hit.split('-')[0]
+        if specie_name not in hmm_coord_hits:
+            hmm_coord_hits[specie_name] = []
+        hmm_coord_hits[specie_name].append(hit_info[0])
+        
+    aling_coord = {specie:flatten(list(regions_dict[specie].values())) for specie in regions_dict.keys()}
+    
+    for specie, align_coords in aling_coord.items():
+        if specie in hmm_coord_hits:
+            instances.append(len(hmm_coord_hits[specie]))
+            hmm_temp = []
+            for hit_coord in hmm_coord_hits[specie]:
+                temp = []
+                for align_coord_ in align_coords: 
+                    if get_overlap(hit_coord, align_coord_) > 0:
+                        temp.append(True)
+                    else:
+                        temp.append(False)
+                if sum(temp) == 1:
+                    hmm_temp.append(True)
+                elif sum(temp) == 0:
+                    hmm_temp.append(False)
+                else:
+                    print('overlap between more than one coords')
+            overlaps.append(Counter(hmm_temp))
         else:
             instances.append(0)
             overlaps.append('-')
