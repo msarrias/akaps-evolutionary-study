@@ -28,7 +28,7 @@ Note:
 - the profile hmm might fail to identify binding regions, specially when few seed sequences are used for creating the model.
 
 
-### key points:
+### Key points:
 - All AKAP79 protein sequences in the selected model species are  human orthologs, with fish being the only exception.
 - Since AKAP79 is known to be important for human synapses, and fish has synapses, one would expect to find it also in fish.
 - What could this mean?
@@ -51,7 +51,7 @@ Which prompts the question: what is the relationship between AKAP79 and Gravin? 
 
 <img width="1087" alt="image" src="https://user-images.githubusercontent.com/16377368/185901669-980263bc-f594-4d87-a91d-7d7164e9a8e5.png">
 
-### key points:
+### Key points:
 - Unlike AKAP79, Gravin (AKAP12) appeared in almost all fish species 
 - Similarites between AKAP79 and Gravin are low. This could indicate that AKAP79 did not originate from Gravin. 
 - One can say that similarites between AKAP79 and Gravin are restricted to the WSK motif.
@@ -59,12 +59,13 @@ Which prompts the question: what is the relationship between AKAP79 and Gravin? 
 
 ### Gravin
 
-<img width="751" alt="image" src="https://user-images.githubusercontent.com/16377368/182708630-99115926-e8c0-453a-9f0d-b643e6948646.png">
-
 * We use as reference the AKAP12 sequence in human
 - **Gene:** AKAP12
 - **Protein name:** AKAP12, Gravin,…
 - **Binding partners:** PKC,PKA, CaM,…
+
+## Gravin architecture
+<img width="751" alt="image" src="https://user-images.githubusercontent.com/16377368/182708630-99115926-e8c0-453a-9f0d-b643e6948646.png">
 
 
 
