@@ -42,4 +42,4 @@ def visualize_aln(aln, missing_seqs):
         print('species with no hits:', missing_seqs[prot_ID])
         print('--------')
         print()
-        print(' ')
+        
