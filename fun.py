@@ -320,6 +320,16 @@ def generate_blast_df(model_species, hits_species_dict):
     df = pd.DataFrame(data=df)
     df = df.groupby('specie').apply(lambda x: x.sort_values('name'))
     return df
+
+
+def summary(feature, hmm_hits, hmm_obj):
+    prot_with_hits = [key for key, value in hmm_hits.items() if value != {}]
+    print(f'The {feature} was found in:')
+    seqs = {key: hmm_obj.parse_fasta_file('fasta_files/' + key +'_oma.fa') for key in prot_with_hits}
+    print([(prot, str(len(hmm_hits[prot])) + '/' + str(len(seqs[prot])))for prot in prot_with_hits])
+    print('Missing in:')
+    print([key for key, value in hmm_hits.items() if value == {}])
+    return [prot for prot in prot_with_hits]
     
     
 def species_host_to_guest_map_dic():
